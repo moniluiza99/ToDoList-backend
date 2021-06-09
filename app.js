@@ -2,7 +2,7 @@ const express = require('express')
 var mysql      = require('mysql');
 const base64 = require('js-base64');
 var jwt = require('jsonwebtoken');
-var jwt = require('express-jwt');
+var jwtMiddleware = require('express-jwt');
 
 
 
@@ -18,14 +18,11 @@ var connection = mysql.createConnection({
  
 
 const bodyParser = require('body-parser')
-const app = express()
+const app = express() 
+app.use(bodyParser.json())
 const port = 8000
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
 
-// parse application/json
-app.use(bodyParser.json())
 const generateToken= (username, userId) => {
     const Payload = {username, userId}
     var token = jwt.sign(Payload, 'your-256-bit-secret', { algorithm: 'HS256'});
@@ -64,7 +61,7 @@ app.post('/login', (req, res) =>  {
      
  })
 
-app.get('/',jwt({ secret: 'your-256-bit-secret', algorithms: ['HS256']}), (req, res) => {
+app.get('/',jwtMiddleware({ secret: 'your-256-bit-secret', algorithms: ['HS256']}), (req, res) => {
   res.send('Hello World!')
 })
 
